@@ -1,8 +1,12 @@
 # Local Portal Quickstart
 
-# Install ROS Kinetic on Ubuntu 16.04
+## Project dependencies
 
-# Project dependencies
+### Ros
+
+First [install ROS Kinetic on Ubuntu 16.04](http://wiki.ros.org/kinetic/Installation/Ubuntu)
+
+and then also rosbridge and a web video server for streaming.
 
 ```
 ros-kinetic-rosbridge-suite ros-kinetic-web-video-server
@@ -10,14 +14,14 @@ ros-kinetic-rosbridge-suite ros-kinetic-web-video-server
 
 
 
-# Install Turtlesim to Test (Optional)
+### Install Turtlesim to Test (Optional)
 
 Install Turtlesim
 ```
 sudo apt-get install ros-$(rosversion -d)-turtlesim
 ```
 
-# Run Simulation and Portal
+## Run Simulation and Portal
 
 Start roscore
 
@@ -52,6 +56,6 @@ Run rostopic to listen in (Optional)
 rostopic echo /turtle1/cmd_vel
 ```
 
-# Controls
+## Controls
 
 Use the onscreen virtual joy or the WASD keys to move the turtlesim bot!
