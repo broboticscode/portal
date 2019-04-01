@@ -116,7 +116,7 @@ window.onload = function () {
     ros = new ROSLIB.Ros({
         url: "ws://" + robot_IP + ":9090"
     });
-    window.alert("Online");
+    //window.alert("u r dum");
 
     initVelocityPublisher();
     // get handle for video placeholder
@@ -126,9 +126,9 @@ window.onload = function () {
     //populate video source using uv4l
       video.src = "http://" + robot_IP + ":8080/stream/video.mjpeg";
 
-    //video.onload = function () {
+    video.onload = function () {
         // joystick and keyboard controls will be available only when video is correctly loaded
         createJoystick();
         initTeleopKeyboard();
-  //  };
+    };
 }
