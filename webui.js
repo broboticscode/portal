@@ -118,12 +118,24 @@ function connect(){
   });
   //window.alert("u r dum");
 
-  initVelocityPublisher();
+  ros.on('connection', function() {
+   console.log('Connected to websocket server.');
+});
+  ros.on('error', function(error) {
+ console.log('Error connecting to websocket server: ', error);
+});
+
+  ros.on('close', function() {
+ console.log('Connection to websocket server closed.');
+});
+
 }
 
 window.onload = function () {
 
     connect();
+    initVelocityPublisher();
+
     // get handle for video placeholder
     video = document.getElementById('video');
     // Populate video source using ros
