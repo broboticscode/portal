@@ -106,19 +106,24 @@ function createJoystick() {
     }
 }
 
+function connect(){
+  // determine robot address automatically
+  // robot_IP = location.hostname;
+  // set robot address statically
+  robot_IP = "127.0.0.1";
+
+  // // Init handle for rosbridge_websocket
+  ros = new ROSLIB.Ros({
+      url: "ws://" + robot_IP + ":9090"
+  });
+  //window.alert("u r dum");
+
+  initVelocityPublisher();
+}
+
 window.onload = function () {
-    // determine robot address automatically
-    // robot_IP = location.hostname;
-    // set robot address statically
-    robot_IP = "127.0.0.1";
 
-    // // Init handle for rosbridge_websocket
-    ros = new ROSLIB.Ros({
-        url: "ws://" + robot_IP + ":9090"
-    });
-    //window.alert("u r dum");
-
-    initVelocityPublisher();
+    connect();
     // get handle for video placeholder
     video = document.getElementById('video');
     // Populate video source using ros
