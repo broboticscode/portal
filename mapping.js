@@ -5,21 +5,30 @@ var robot_IP;
 var manager;
 var teleop;
 var ros;
-
+var map;
 
 function initMap() {
   var myLatLng = {lat: -25.363, lng: 131.044};
 
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     zoom: 4,
     center: myLatLng
   });
+
+
+}
+
+function updateMarker(lat, lng){
+  //var myLatLng = {lat: -25.363, lng: 131.044};
+  var myLatLng = {lat: lat, lng: lng};
 
   var marker = new google.maps.Marker({
     position: myLatLng,
     map: map,
     title: 'Hello World!'
   });
+  marker.setMap(map);
+
 }
 
 function fixListener(){
@@ -41,7 +50,7 @@ function fixListener(){
   listener.subscribe(function(message) {
     console.log('Received latitude ' + listener.name + ': ' + message.latitude);
     console.log('Received longitude ' + listener.name + ': ' + message.longitude);
-
+    updateMarker(message.latitude,message.longitude)
 
     console.log('Received type ' + typeof(message));
   //  listener.unsubscribe();

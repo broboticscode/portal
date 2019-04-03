@@ -54,6 +54,11 @@ Start roscore
 ```
 roscore
 ```
+Launch the rosbridge server to connect the portal to the ros simulation or robot_IP
+
+```
+roslaunch rosbridge_server rosbridge_websocket.launch
+```
 
 #### Video
 
@@ -76,9 +81,15 @@ gpsd -Nn /dev/ttyACM0
 ```
 Run GPS node (Optional)
 
+```
+source devel/setup.bash
+rosrun gpsd_client gpsd_client
+```
+
+Listen in on /fix
 
 ```
-rosrun gpsd_client gpsd_client
+rostopic echo /fix
 ```
 
 #### Turtlesim
@@ -87,11 +98,6 @@ Run turtlesim (Optional)
 
 ```
 rosrun turtlesim turtlesim_node
-```
-Launch the rosbridge server to connect the portal to the ros simulation or robot_IP
-
-```
-roslaunch rosbridge_server rosbridge_websocket.launch
 ```
 Run rostopic to listen in (Optional)
 ```
