@@ -29,16 +29,16 @@ function updateMarker(lat, lng){
   //var myLatLng = {lat: -25.363, lng: 131.044};
   var myLatLng = {lat: lat, lng: lng};
 
-  var marker = new google.maps.Marker({
-    position: myLatLng,
-    map: map,
-    title: 'Hello World!'
-  });
+  // var marker = new google.maps.Marker({
+  //   position: myLatLng,
+  //   map: map,
+  //   title: 'Hello World!'
+  // });
 
-  currentMarker.setMap(null);
-  currentMarker = null;
-  currentMarker = marker;
-
+  // currentMarker.setMap(null);
+  // currentMarker = null;
+  // currentMarker = marker;
+  currentMarker.setPosition(myLatLng);
   currentMarker.setMap(map);
 
 }
