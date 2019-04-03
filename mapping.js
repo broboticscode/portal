@@ -6,16 +6,23 @@ var manager;
 var teleop;
 var ros;
 var map;
+var mapInit;
+var currentMarker;
 
 function initMap() {
-  var myLatLng = {lat: -25.363, lng: 131.044};
 
+  var myLatLng = {lat: -33.8284721, lng: 151.19212733};
+  currentMarker = new google.maps.Marker({
+    position: myLatLng,
+    map: map,
+    title: 'FIRST HARD CODED MARKER'
+  });
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 4,
+    zoom: 16,
     center: myLatLng
   });
 
-
+  mapInit = true;
 }
 
 function updateMarker(lat, lng){
@@ -27,7 +34,12 @@ function updateMarker(lat, lng){
     map: map,
     title: 'Hello World!'
   });
-  marker.setMap(map);
+
+  currentMarker.setMap(null);
+  currentMarker = null;
+  currentMarker = marker;
+
+  currentMarker.setMap(map);
 
 }
 
@@ -55,6 +67,8 @@ function fixListener(){
     console.log('Received type ' + typeof(message));
   //  listener.unsubscribe();
   });
+
+
 }
 
 function connect(){
