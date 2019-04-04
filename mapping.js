@@ -33,7 +33,7 @@ function placeMarkerAndPanTo(latLng, map) {
           position: latLng,
           map: map
         });
-        map.panTo(latLng);
+      //  map.panTo(latLng);
       }
 
 function updateMarker(lat, lng){
