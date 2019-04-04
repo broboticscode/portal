@@ -22,8 +22,19 @@ function initMap() {
     center: myLatLng
   });
 
+  map.addListener('click', function(e) {
+           placeMarkerAndPanTo(e.latLng, map);
+         });
   mapInit = true;
 }
+
+function placeMarkerAndPanTo(latLng, map) {
+        var marker = new google.maps.Marker({
+          position: latLng,
+          map: map
+        });
+        map.panTo(latLng);
+      }
 
 function updateMarker(lat, lng){
   //var myLatLng = {lat: -25.363, lng: 131.044};
