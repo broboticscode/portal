@@ -8,6 +8,7 @@ var ros;
 var map;
 var mapInit;
 var currentMarker;
+var latLngs = [];
 
 function initMap() {
 
@@ -23,16 +24,28 @@ function initMap() {
   });
 
   map.addListener('click', function(e) {
-           placeMarkerAndPanTo(e.latLng, map);
+           placeMarker(e.latLng, map);
          });
   mapInit = true;
 }
 
-function placeMarkerAndPanTo(latLng, map) {
+
+function placeMarker(latLng, map) {
         var marker = new google.maps.Marker({
           position: latLng,
           map: map
         });
+        //add marker to arraylist
+        latLngs.push(latLng);
+        var flightPath = new google.maps.Polyline({
+                  path: latLngs,
+                  geodesic: true,
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 1.0,
+                  strokeWeight: 2
+                });
+        flightPath.setMap(map);
+
       //  map.panTo(latLng);
       }
 
