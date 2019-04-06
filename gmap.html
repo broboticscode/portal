@@ -1,13 +1,20 @@
 <!doctype html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
   <script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-  <!-- <script src='key.js'></script> -->
-  <script src="mapping.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> -->
+
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
 
@@ -29,9 +36,24 @@
   </style>
 </head>
   <body>
+
     <div id="map"></div>
-    <script async defer
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvw6RInTxTbh-gGvXHdSrWIEE43Je-E40"></script>
+    <script src="mapping.js"></script>
+
+    <!-- <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvw6RInTxTbh-gGvXHdSrWIEE43Je-E40&callback=initMap">
-    </script>
+    </script> -->
+    <!-- <script>
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+      </script> -->
+
+
+
+
   </body>
+
 </html>
