@@ -37,12 +37,20 @@ function placeMarker(latLng, map) {
         });
         //add marker to arraylist
         latLngs.push(latLng);
+        var lineSymbol = {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+        };
+        
         var flightPath = new google.maps.Polyline({
                   path: latLngs,
                   geodesic: true,
                   strokeColor: '#FF0000',
                   strokeOpacity: 1.0,
-                  strokeWeight: 2
+                  strokeWeight: 2,
+                  icons: [{
+                      icon: lineSymbol,
+                      offset: '100%'
+                    }]
                 });
         flightPath.setMap(map);
 
