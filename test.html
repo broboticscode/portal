@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ContextMenu 1.0 Basic Example</title>
+<style type="text/css">
+html{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	height:100%;
+}
+body{
+	height:100%;
+	margin:0;
+	padding:0;
+}
+/*	start styles for the ContextMenu	*/
+.context_menu{
+	background-color:white;
+	border:1px solid gray;
+}
+.context_menu_item{
+	padding:3px 6px;
+}
+.context_menu_item:hover{
+	background-color:#CCCCCC;
+}
+.context_menu_separator{
+	background-color:gray;
+	height:1px;
+	margin:0;
+	padding:0;
+}
+/*	end styles for the ContextMenu	*/
+#map_container{
+	height:100%;
+}
+</style>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvw6RInTxTbh-gGvXHdSrWIEE43Je-E40&callback=initMap"></script>
+<script type="text/javascript" src="ContextMenu.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+function initialise(){
+	//	create a basic map
+	var mapOptions={};
+	mapOptions.zoom=8;
+	mapOptions.center=new google.maps.LatLng(52.7545, 0.3957);
+	mapOptions.mapTypeId=google.maps.MapTypeId.ROADMAP;
+
+	var map=new google.maps.Map(document.getElementById('map_container'), mapOptions);
+
+	//	create the ContextMenuOptions object
+	var contextMenuOptions={};
+	contextMenuOptions.classNames={menu:'context_menu', menuSeparator:'context_menu_separator'};
+
+	//	create an array of ContextMenuItem objects
+	var menuItems=[];
+	menuItems.push({className:'context_menu_item', eventName:'zoom_in_click', label:'Zoom in'});
+	menuItems.push({className:'context_menu_item', eventName:'zoom_out_click', label:'Zoom out'});
+	//	a menuItem with no properties will be rendered as a separator
+	menuItems.push({});
+	menuItems.push({className:'context_menu_item', eventName:'center_map_click', label:'Center map here'});
+	contextMenuOptions.menuItems=menuItems;
+
+	//	create the ContextMenu object
+	var contextMenu=new ContextMenu(map, contextMenuOptions);
+
+	//	display the ContextMenu on a Map right click
+	google.maps.event.addListener(map, 'rightclick', function(mouseEvent){
+		contextMenu.show(mouseEvent.latLng);
+	});
+
+	//	listen for the ContextMenu 'menu_item_selected' event
+	google.maps.event.addListener(contextMenu, 'menu_item_selected', function(latLng, eventName){
+		//	latLng is the position of the ContextMenu
+		//	eventName is the eventName defined for the clicked ContextMenuItem in the ContextMenuOptions
+		switch(eventName){
+			case 'zoom_in_click':
+				map.setZoom(map.getZoom()+1);
+				break;
+			case 'zoom_out_click':
+				map.setZoom(map.getZoom()-1);
+				break;
+			case 'center_map_click':
+				map.panTo(latLng);
+				break;
+		}
+	});
+}
+//]]>
+</script>
+</head>
+<body onload="initialise()">
+	<div id="map_container"></div>
+</body>
+</html>
