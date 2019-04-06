@@ -8,7 +8,22 @@ var ros;
 var map;
 var mapInit;
 var currentMarker;
+var markers = [];
 var latLngs = [];
+//var contextMenuOptions = null;
+//var contextMenu = null;
+$.getScript("context-menu.js", function() {
+  //alert("Import worked");
+});
+//import * as mymodule from 'context-menu.js';
+
+var menuStyle = {
+ 	menu: 'dropdown-menu',
+ 	menuSeparator: 'divider'
+ };
+
+
+
 
 function initMap() {
 
@@ -22,11 +37,91 @@ function initMap() {
     zoom: 16,
     center: myLatLng
   });
+  //google.maps.event.addListener(map,  'rightclick',  function(mouseEvent) { alert('Right click triggered'); });
 
+  //disable for now to test context menu
   map.addListener('click', function(e) {
            placeMarker(e.latLng, map);
          });
   mapInit = true;
+
+
+
+
+
+  // map.setContextMenu({
+  //   control: 'map',
+  //   options: [{
+  //     title: 'Add marker',
+  //     name: 'add_marker',
+  //     action: function(e) {
+  //       this.addMarker({
+  //         lat: e.latLng.lat(),
+  //         lng: e.latLng.lng(),
+  //         title: 'New marker'
+  //       });
+  //     }
+  //   }, {
+  //     title: 'Center here',
+  //     name: 'center_here',
+  //     action: function(e) {
+  //       this.setCenter(e.latLng.lat(), e.latLng.lng());
+  //     }
+  //   }]
+  // });
+
+  var contextMenuOptions  = {
+   	classNames: menuStyle,
+   	menuItems: [
+   		{ label:'option1', id:'menu_option1',
+   			className: 'dropdown-item', eventName:'option1_clicked' },
+        { label:'option2', id:'menu_option2',
+     			className: 'dropdown-item', eventName:'option2_clicked' },
+   		{ },
+      { label:'option3', id:'menu_option3',
+   			className: 'dropdown-item', eventName:'option3_clicked' }
+   	],
+   	pixelOffset: new google.maps.Point(0, 0),
+   	zIndex: 5
+   };
+
+  var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+   google.maps.event.addListener(contextMenu, 'menu_item_selected',
+    	function(latLng, eventName, source){
+    	switch(eventName){
+    		case 'option1_clicked':
+    			// do something
+          alert("Option 1 clicked")
+    			break;
+    		case 'option2_clicked':
+    			// do something else
+          alert("Option 2 clicked")
+
+    			break;
+        case 'option3_clicked':
+    			// do something else
+          alert("Option 3 clicked")
+
+    			break;
+    		default:
+    			// freak out
+    			break;
+    	}
+    	contextMenu.hide();
+  });
+
+  google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
+    //alert('Right click triggered');
+
+    //contextMenu.show(mouseEvent.latLng, map);
+    contextMenu.show(mouseEvent.latLng);
+    //contextMenu.show(mouseEvent.latLng);
+
+
+  });
+
+
 }
 
 
@@ -37,10 +132,21 @@ function placeMarker(latLng, map) {
         });
         //add marker to arraylist
         latLngs.push(latLng);
+        markers.push(marker);
+        google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
+          alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
+
+          //contextMenu.show(mouseEvent.latLng, map);
+          contextMenu.show(mouseEvent.latLng);
+          //contextMenu.show(mouseEvent.latLng);
+
+
+        });
+
         var lineSymbol = {
           path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
         };
-        
+
         var flightPath = new google.maps.Polyline({
                   path: latLngs,
                   geodesic: true,
@@ -127,6 +233,10 @@ function connect(){
 }
 
 window.onload = function () {
-  connect();
-  fixListener();
+  //turned off connection temporarily
+  //connect();
+  //fixListener();
+
+  //temporarily manually invoke this
+  initMap();
 }
