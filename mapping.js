@@ -10,6 +10,11 @@ var mapInit;
 var currentMarker;
 var markers = [];
 var latLngs = [];
+//var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var labels = 'H123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+var labelIndex = 0;
+
 //var contextMenuOptions = null;
 //var contextMenu = null;
 $.getScript("context-menu.js", function() {
@@ -128,7 +133,8 @@ function initMap() {
 function placeMarker(latLng, map) {
         var marker = new google.maps.Marker({
           position: latLng,
-          map: map
+          map: map,
+          label: labels[labelIndex++ % labels.length]
         });
         //add marker to arraylist
         latLngs.push(latLng);
