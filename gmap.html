@@ -20,7 +20,7 @@
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
 
-  <title>Robot Map</title>
+  <title>Planner</title>
   <style>
     /* Always set the map height explicitly to define the size of the div
      * element that contains the map. */
@@ -28,15 +28,29 @@
       position: relative;
 
     } */
+    #map_canvas_container {position: relative;}
+    #side{
+      position:static;
+      width:200px;
+      height:100%;
+
+      bottom:0;
+      top:0;
+      left:0;
+      right:0;
+    }
     #map {
       display: block;
       position:absolute;
       height:auto;
       bottom:0;
       top:0;
-      left:0;
+      left:200px;
       right:0;
       margin-top:56px; /* adjust top margin to your header height */
+      width: auto;
+      height:auto;
+
   }
     /* Optional: Makes the sample page fill the window. */
     html, body {
@@ -78,7 +92,19 @@
 
 
     <!-- </div> -->
+  <div id="container">
+    <div id = "side">
+      <ul class="list-group">
+      <li class="list-group-item">Cras justo odio</li>
+      <li class="list-group-item">Dapibus ac facilisis in</li>
+      <li class="list-group-item">Morbi leo risus</li>
+      <li class="list-group-item">Porta ac consectetur ac</li>
+      <li class="list-group-item">Vestibulum at eros</li>
+      </ul>
+    <div>
+
     <div id="map"></div>
+  </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvw6RInTxTbh-gGvXHdSrWIEE43Je-E40"></script>
     <script src="mapping.js"></script>
 
