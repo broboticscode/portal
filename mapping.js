@@ -78,9 +78,9 @@ function initMap() {
   var contextMenuOptions  = {
    	classNames: menuStyle,
    	menuItems: [
-   		{ label:'option1', id:'menu_option1',
+   		{ label:'Centre Map Here', id:'menu_option1',
    			className: 'dropdown-item', eventName:'option1_clicked' },
-        { label:'option2', id:'menu_option2',
+        { label:'Add Marker Here', id:'menu_option2',
      			className: 'dropdown-item', eventName:'option2_clicked' },
    		{ },
       { label:'option3', id:'menu_option3',
@@ -143,12 +143,12 @@ function placeMarker(latLng, map) {
         var contextMenuOptions  = {
          	classNames: menuStyle,
          	menuItems: [
-         		{ label:'option1', id:'menu_option1',
+         		{ label:'Delete Marker', id:'menu_option1',
          			className: 'dropdown-item', eventName:'option1_clicked' },
-              { label:'option2', id:'menu_option2',
+              { label:'Change Marker Position', id:'menu_option2',
            			className: 'dropdown-item', eventName:'option2_clicked' },
          		{ },
-            { label:'option3', id:'menu_option3',
+            { label:'Set Home Marker', id:'menu_option3',
          			className: 'dropdown-item', eventName:'option3_clicked' }
          	],
          	pixelOffset: new google.maps.Point(0, 0),
