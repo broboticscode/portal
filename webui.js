@@ -58,6 +58,8 @@ function initTeleopKeyboard() {
     robotSpeedRange.oninput = function () {
         teleop.scale = robotSpeedRange.value / 100
     }
+    console.log('Teleop keyboard started.');
+
 }
 
 function createJoystick() {
