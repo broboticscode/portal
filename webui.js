@@ -104,6 +104,8 @@ function createJoystick() {
             moveAction(0, 0);
         });
     }
+    console.log('Joystick component created and rendered.');
+
 }
 
 function connect(){
