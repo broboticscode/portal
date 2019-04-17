@@ -139,6 +139,48 @@ function placeMarker(latLng, map) {
         //add marker to arraylist
         latLngs.push(latLng);
         markers.push(marker);
+
+        var contextMenuOptions  = {
+         	classNames: menuStyle,
+         	menuItems: [
+         		{ label:'option1', id:'menu_option1',
+         			className: 'dropdown-item', eventName:'option1_clicked' },
+              { label:'option2', id:'menu_option2',
+           			className: 'dropdown-item', eventName:'option2_clicked' },
+         		{ },
+            { label:'option3', id:'menu_option3',
+         			className: 'dropdown-item', eventName:'option3_clicked' }
+         	],
+         	pixelOffset: new google.maps.Point(0, 0),
+         	zIndex: 5
+         };
+
+        var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+         google.maps.event.addListener(contextMenu, 'menu_item_selected',
+            function(latLng, eventName, source){
+            switch(eventName){
+              case 'option1_clicked':
+                // do something
+                alert("Marker Option 1 clicked")
+                break;
+              case 'option2_clicked':
+                // do something else
+                alert("Marker Option 2 clicked")
+
+                break;
+              case 'option3_clicked':
+                // do something else
+                alert("Marker Option 3 clicked")
+
+                break;
+              default:
+                // freak out
+                break;
+            }
+            contextMenu.hide();
+        });
+
         google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
           alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
 
