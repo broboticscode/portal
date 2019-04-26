@@ -8,16 +8,19 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+
 <script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 <script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 <script src="https://static.robotwebtools.org/keyboardteleopjs/current/keyboardteleop.min.js"></script>
 <script src="http://yoannmoinet.github.io/nipplejs/javascripts/nipplejs.js"></script>
-<script src="webui.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<script src="webui.js"></script>
+
+<!-- <script src="slider.js"> -->
 </head>
 <body class="bg-light">
 
@@ -51,6 +54,18 @@
 <!-- <h1 class=text-center>Local Operation Portal</h1>
 <h4 class=text-center ><a href="gmap.html"> Gmap </a></h4> -->
 
+<div class="main">
+  <label for="panel_size">Panel Size</label>
+  <input
+      type="range"
+      name="participants"
+      min="5"
+      max="51"
+      value="20"
+      id="robot-speed"
+  >
+  <span class="rangeslider__tooltip" id ="range-tooltip"></span>
+</div>
 
   <!-- SPEED -->
 <div class="row">
