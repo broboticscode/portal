@@ -6,9 +6,7 @@ var manager;
 var teleop;
 var ros;
 
-$.getScript("slider.js", function() {
-  alert("Import worked");
-});
+
 function moveAction(linear, angular) {
     if (linear !== undefined && angular !== undefined) {
         twist.linear.x = linear;
@@ -156,4 +154,5 @@ window.onload = function () {
         initTeleopKeyboard();
     };
 
+    $.getScript("slider.js");
 }

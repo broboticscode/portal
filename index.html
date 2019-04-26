@@ -7,9 +7,11 @@
 <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="slider.css">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+<script src="node_modules/rangeslider.js/dist/rangeslider.js"></script>
 
 <script src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 <script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
@@ -54,7 +56,7 @@
 <!-- <h1 class=text-center>Local Operation Portal</h1>
 <h4 class=text-center ><a href="gmap.html"> Gmap </a></h4> -->
 
-<div class="main">
+<!-- <div class="main">
   <label for="panel_size">Panel Size</label>
   <input
       type="range"
@@ -65,16 +67,27 @@
       id="robot-speed"
   >
   <span class="rangeslider__tooltip" id ="range-tooltip"></span>
-</div>
+</div> -->
 
   <!-- SPEED -->
 <div class="row">
     <div class="col-md-4"></div>
     <div class=" col-md-4">
-        <label for="robot-speed">
-            <strong>Robot speed</strong>
-        </label>
-        <input type="range" min="15" max="80" class="custom-range" id="robot-speed">
+      <label for="robot-speed">
+          <strong>Robot speed</strong>
+      </label>
+        <div class="main">
+
+        <input
+            type="range"
+            name="participants"
+            min="5"
+            max="51"
+            value="20"
+            id="robot-speed"
+        >
+      </div>
+        <!-- <input type="range" min="15" max="80" class="custom-range" id="idiot-speed"> -->
     </div>
     <div class="col-md-4"></div>
 </div>

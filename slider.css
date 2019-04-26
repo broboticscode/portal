@@ -22,9 +22,12 @@ body {
 
 label {
   display: block;
-  margin-bottom: 2.5em;
-  font-size: 13px;
+  margin-bottom: 5em;
+  font-size: 16px;
   font-weight: bold;
+  text-align: center;
+
+
 }
 
 .rangeslider__tooltip {
@@ -44,6 +47,8 @@ input[type='range'] {
   line-height: 42px;
   text-align: center;
   font-weight: bold;
+  box-sizing: content-box;
+
 }
 .rangeslider__handle:after {
   background: 0;
