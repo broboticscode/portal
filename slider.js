@@ -2,7 +2,7 @@ $(function() {
 const $element = $('input[type="range"]');
 const $tooltip = $('#range-tooltip');
 const sliderStates = [
-  {name: "low", tooltip: "Great, we're confident we can complete your project within <strong>24 hours</strong> of launch.", range: _.range(5, 26) },
+  {name: "low", tooltip: "Great, we're confident we can complete your project within <strong>24 hours</strong> of launch.", range: _.range(0, 26) },
   {name: "med", tooltip: "Looks good! We can complete a project of this size within <strong>48 hours</strong> of launch.", range: _.range(26, 51)},
   {name: "high", tooltip: "With a project of this size we'd like to talk with you before setting a completion timeline.", range: [51] },
 ];
@@ -50,7 +50,7 @@ function updateState(el, val) {
   }
   // If the state is high, update the handle count to read 50+
   if (currentState.name == "high") {
-    updateHandle($handle[0], "50+");
+    updateHandle($handle[0], "MAX");
   }
   // Update handle color
   $handle
