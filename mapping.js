@@ -89,9 +89,9 @@ function initMap() {
    	classNames: menuStyle,
    	menuItems: [
    		{ label:'Centre Map Here', id:'menu_option1',
-   			className: 'dropdown-item', eventName:'option1_clicked' },
+   			className: 'dropdown-item', eventName:'centremap_clicked' },
         { label:'Add Marker Here', id:'menu_option2',
-     			className: 'dropdown-item', eventName:'option2_clicked' },
+     			className: 'dropdown-item', eventName:'addmarker_clicked' },
    		{ },
       { label:'Clear Map', id:'menu_option3',
    			className: 'dropdown-item', eventName:'deleteAll_clicked' }
@@ -105,14 +105,15 @@ function initMap() {
    google.maps.event.addListener(contextMenu, 'menu_item_selected',
     	function(latLng, eventName, source){
     	switch(eventName){
-    		case 'option1_clicked':
+    		case 'centremap_clicked':
     			// do something
           //alert("Option 1 clicked")
-          centerMap(latLng);
+          centreMap(latLng);
     			break;
-    		case 'option2_clicked':
+    		case 'addmarker_clicked':
     			// do something else
-          alert("Option 2 clicked")
+          //alert("Option 2 clicked")
+          placeMarker(latLng,map);
 
     			break;
         case 'deleteAll_clicked':
@@ -139,7 +140,7 @@ function initMap() {
 
 }
 
-function centerMap(latLng){
+function centreMap(latLng){
   map.setCenter(latLng);
 }
 
