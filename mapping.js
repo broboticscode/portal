@@ -10,6 +10,7 @@ var mapInit;
 var currentMarker;
 var markers = [];
 var latLngs = [];
+var paths = [];
 //var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labels = 'H123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -144,12 +145,12 @@ function placeMarker(latLng, map) {
          	classNames: menuStyle,
          	menuItems: [
          		{ label:'Delete Marker', id:'menu_option1',
-         			className: 'dropdown-item', eventName:'option1_clicked' },
+         			className: 'dropdown-item', eventName:'delete_clicked' },
               { label:'Change Marker Position', id:'menu_option2',
-           			className: 'dropdown-item', eventName:'option2_clicked' },
+           			className: 'dropdown-item', eventName:'change_clicked' },
          		{ },
             { label:'Set Home Marker', id:'menu_option3',
-         			className: 'dropdown-item', eventName:'option3_clicked' }
+         			className: 'dropdown-item', eventName:'sethome_clicked' }
          	],
          	pixelOffset: new google.maps.Point(0, 0),
          	zIndex: 5
@@ -159,19 +160,22 @@ function placeMarker(latLng, map) {
 
          google.maps.event.addListener(contextMenu, 'menu_item_selected',
             function(latLng, eventName, source){
+            console.log(latLng);
+
             switch(eventName){
-              case 'option1_clicked':
+              case 'delete_clicked':
                 // do something
-                alert("Marker Option 1 clicked")
+                alert("Delete marker clicked");
+                deleteMarker(latLng);
                 break;
-              case 'option2_clicked':
+              case 'change_clicked':
                 // do something else
-                alert("Marker Option 2 clicked")
+                alert("Marker Option 2 clicked");
 
                 break;
-              case 'option3_clicked':
+              case 'sethome_clicked':
                 // do something else
-                alert("Marker Option 3 clicked")
+                alert("Marker Option 3 clicked");
 
                 break;
               default:
@@ -182,7 +186,7 @@ function placeMarker(latLng, map) {
         });
 
         google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
-          alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
+          //alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
 
           //contextMenu.show(mouseEvent.latLng, map);
           contextMenu.show(mouseEvent.latLng);
@@ -207,9 +211,50 @@ function placeMarker(latLng, map) {
                     }]
                 });
         flightPath.setMap(map);
-
+        paths.push(flightPath);
       //  map.panTo(latLng);
       }
+function deleteMarker(latLng){
+  setMapOnAllMarkers(null);
+  setMapOnAllPaths(null);
+  labelIndex=0;
+  for(var index =0; index<this.latLngs.length;++index) {
+    if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      this.latLngs.splice(index,1);
+      this.markers.splice(index,1);
+    }
+  }
+  listMarkers();
+  reorderMarkers();
+}
+
+function setMapOnAllMarkers(map) {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+      }
+function setMapOnAllPaths(map) {
+        for (var i = 0; i < paths.length; i++) {
+          paths[i].setMap(map);
+        }
+      }
+
+function reorderMarkers(){
+  oldlatLngs=Array.from(latLngs);
+  latLngs=[]
+  markers=[]
+  for(var index =0; index<this.oldlatLngs.length;++index) {
+    placeMarker(oldlatLngs[index],this.map);
+  }
+
+}
+
+function listMarkers(){
+  for(var index =0; index<this.latLngs.length;++index) {
+    console.log("Lat " + latLngs[index].lat() + " Long " + latLngs[index].lng());
+  }
+}
+
 
 function updateMarker(lat, lng){
   //var myLatLng = {lat: -25.363, lng: 131.044};
