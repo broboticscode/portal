@@ -39,9 +39,18 @@ function initMap() {
     map: map,
     title: 'FIRST HARD CODED MARKER'
   });
+  //create map with options, currently have POIs turned off
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 16,
-    center: myLatLng
+    center: myLatLng,
+    styles: [
+    {
+      "featureType": "poi",
+      "stylers": [
+        { "visibility": "off" }
+      ]
+    }
+  ]
   });
   //google.maps.event.addListener(map,  'rightclick',  function(mouseEvent) { alert('Right click triggered'); });
 
@@ -98,7 +107,8 @@ function initMap() {
     	switch(eventName){
     		case 'option1_clicked':
     			// do something
-          alert("Option 1 clicked")
+          //alert("Option 1 clicked")
+          centerMap(latLng);
     			break;
     		case 'option2_clicked':
     			// do something else
@@ -127,6 +137,10 @@ function initMap() {
   });
 
 
+}
+
+function centerMap(latLng){
+  map.setCenter(latLng);
 }
 
 function clearMap(){
@@ -169,7 +183,10 @@ function placeMarker(latLng, map) {
            			className: 'dropdown-item', eventName:'change_clicked' },
          		{ },
             { label:'Set Home Marker', id:'menu_option3',
-         			className: 'dropdown-item', eventName:'sethome_clicked' }
+         			className: 'dropdown-item', eventName:'sethome_clicked' },
+              { },
+              { label:'Center on Marker', id:'menu_option4',
+           			className: 'dropdown-item', eventName:'centermarker_clicked' }
          	],
          	pixelOffset: new google.maps.Point(0, 0),
          	zIndex: 5
@@ -196,6 +213,9 @@ function placeMarker(latLng, map) {
                 // do something else
                 alert("Marker Option 3 clicked");
 
+                break;
+              case 'centermarker_clicked':
+                centerMap(latLng);
                 break;
               default:
                 // freak out
