@@ -84,8 +84,8 @@ function initMap() {
         { label:'Add Marker Here', id:'menu_option2',
      			className: 'dropdown-item', eventName:'option2_clicked' },
    		{ },
-      { label:'option3', id:'menu_option3',
-   			className: 'dropdown-item', eventName:'option3_clicked' }
+      { label:'Clear Map', id:'menu_option3',
+   			className: 'dropdown-item', eventName:'deleteAll_clicked' }
    	],
    	pixelOffset: new google.maps.Point(0, 0),
    	zIndex: 5
@@ -105,10 +105,9 @@ function initMap() {
           alert("Option 2 clicked")
 
     			break;
-        case 'option3_clicked':
+        case 'deleteAll_clicked':
     			// do something else
-          alert("Option 3 clicked")
-
+          clearMap();
     			break;
     		default:
     			// freak out
@@ -130,6 +129,26 @@ function initMap() {
 
 }
 
+function clearMap(){
+  deleteAllMarkers();
+  deleteAllPaths();
+  deleteAllLatLngs();
+}
+
+function deleteAllMarkers(){
+  labelIndex=0;
+  setMapOnAllMarkers(null);
+  markers=[];
+}
+
+function deleteAllLatLngs(){
+  latLngs=[];
+}
+
+function deleteAllPaths(){
+  setMapOnAllPaths(null);
+  paths=[]
+}
 
 function placeMarker(latLng, map) {
         var marker = new google.maps.Marker({
@@ -215,9 +234,8 @@ function placeMarker(latLng, map) {
       //  map.panTo(latLng);
       }
 function deleteMarker(latLng){
-  setMapOnAllMarkers(null);
-  setMapOnAllPaths(null);
-  labelIndex=0;
+  deleteAllMarkers();
+  deleteAllPaths();
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
       this.latLngs.splice(index,1);
@@ -226,6 +244,7 @@ function deleteMarker(latLng){
   }
   listMarkers();
   reorderMarkers();
+
 }
 
 function setMapOnAllMarkers(map) {
@@ -241,8 +260,7 @@ function setMapOnAllPaths(map) {
 
 function reorderMarkers(){
   oldlatLngs=Array.from(latLngs);
-  latLngs=[]
-  markers=[]
+  deleteAllLatLngs();
   for(var index =0; index<this.oldlatLngs.length;++index) {
     placeMarker(oldlatLngs[index],this.map);
   }
