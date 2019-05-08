@@ -280,10 +280,17 @@ function placeMarker(e,latLng, map, position,needPath) {
         console.log("place marker event:");
         //onsole.log(event);
         //latLng = event.latLng;
+        var labelNum=0;
+        if(position==-1){
+          labelNum=labels[markers.length % labels.length].toString();
+        }
+        else{
+          labelNum=labels[position % labels.length].toString();
+        }
         var marker = new google.maps.Marker({
           position: latLng,
           map: map,
-          label: labels[markers.length % labels.length]
+          label: labelNum
         });
         //add marker to arraylist
         var path = flightPath.getPath();
@@ -300,8 +307,9 @@ function placeMarker(e,latLng, map, position,needPath) {
 
         }
         else{
-          latLngs.splice(1,0,latLng);
-          markers.splice(1,0,marker);
+          shiftLabelsRight(position);
+          latLngs.splice(position,0,latLng);
+          markers.splice(position,0,marker);
           if(needPath){
             path.insertAt(position,latLng);
           }
