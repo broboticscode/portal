@@ -283,7 +283,7 @@ function placeMarker(e,latLng, map, position,needPath) {
         var marker = new google.maps.Marker({
           position: latLng,
           map: map,
-          label: labels[labelIndex++ % labels.length]
+          label: labels[markers.length % labels.length]
         });
         //add marker to arraylist
         var path = flightPath.getPath();
@@ -301,7 +301,7 @@ function placeMarker(e,latLng, map, position,needPath) {
         }
         else{
           latLngs.splice(1,0,latLng);
-          markers.splice(1,0,latLng);
+          markers.splice(1,0,marker);
           if(needPath){
             path.insertAt(position,latLng);
           }
@@ -395,6 +395,24 @@ function setMapOnMarker(marker,map){
     marker.setMap(map);
 }
 
+//Shift the labels to the right for inserting a new marker
+function shiftLabelsRight(index){
+  for(var index =index; index<this.markers.length;++index) {
+    var num= Number(markers[index].label)+1
+    markers[index].setLabel(num.toString());    }
+  }
+
+//Shift the labels to the left for deleting a marker
+
+function shiftLabelsLeft(index){
+  for(var index =index+1; index<this.markers.length;++index) {
+      var num= Number(markers[index].label)-1
+      markers[index].setLabel(num.toString());
+      //markers[index].setLabel("TEST");
+    }
+  }
+
+
 function findMarker(latLng){
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
@@ -413,6 +431,7 @@ function deleteMarker(latLng){
   //setMapOnMarker();
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      shiftLabelsLeft(index);
       setMapOnMarker(markers[index],null);
       this.latLngs.splice(index,1);
       this.markers.splice(index,1);
