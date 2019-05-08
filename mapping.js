@@ -6,6 +6,7 @@ var manager;
 var teleop;
 var ros;
 var map;
+var flightPath;
 var mapInit;
 var currentMarker;
 var markers = [];
@@ -52,12 +53,31 @@ function initMap() {
     }
   ]
   });
+
+  var lineSymbol = {
+    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+  };
+
+  flightPath = new google.maps.Polyline({
+            editable: true,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+            icons: [{
+                icon: lineSymbol,
+                offset: '100%'
+              }]
+          });
+  flightPath.setMap(map);
+//  paths.push(flightPath);
   //google.maps.event.addListener(map,  'rightclick',  function(mouseEvent) { alert('Right click triggered'); });
 
   //disable for now to test context menu
   map.addListener('click', function(e) {
-           placeMarker(e.latLng, map);
+           placeMarker(e,e.latLng, map);
          });
+
   mapInit = true;
 
 
@@ -103,17 +123,17 @@ function initMap() {
   var contextMenu = new ContextMenu(map, contextMenuOptions);
 
    google.maps.event.addListener(contextMenu, 'menu_item_selected',
-    	function(latLng, eventName, source){
+    	function(event, eventName, source){
     	switch(eventName){
     		case 'centremap_clicked':
     			// do something
           //alert("Option 1 clicked")
-          centreMap(latLng);
+          centreMap(event.latLng);
     			break;
     		case 'addmarker_clicked':
     			// do something else
           //alert("Option 2 clicked")
-          placeMarker(latLng,map);
+          placeMarker(event.latLng,map);
 
     			break;
         case 'deleteAll_clicked':
@@ -127,22 +147,65 @@ function initMap() {
     	contextMenu.hide();
   });
 
+  var flightMenuOptions  = {
+   	classNames: menuStyle,
+   	menuItems: [
+   		{ label:'Delete Segment', id:'menu_option1',
+   			className: 'dropdown-item', eventName:'delete_segment' }
+   	],
+   	pixelOffset: new google.maps.Point(0, 0),
+   	zIndex: 5
+   };
+
+  var flightMenu = new ContextMenu(map, flightMenuOptions);
+
+   google.maps.event.addListener(flightMenu, 'menu_item_selected',
+    	function(e, eventName, source){
+      console.log("Flight menu item selected triggered");
+
+    	switch(eventName){
+    		case 'delete_segment':
+    			// do something
+          console.log("Delete edge " + e.edge);
+          //alert("Delete edge  called")
+          //centreMap(latLng);
+    			break;
+
+    		default:
+    			// freak out
+    			break;
+    	}
+    	flightMenu.hide();
+  });
+
   google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
     //alert('Right click triggered');
 
     //contextMenu.show(mouseEvent.latLng, map);
-    contextMenu.show(mouseEvent.latLng);
+    contextMenu.show(mouseEvent);
     //contextMenu.show(mouseEvent.latLng);
 
 
   });
-
+  google.maps.event.addListener(flightPath, 'rightclick', function(e) {
+      //alert("Right click of path detected");
+          // Check if click was on a vertex control point
+          // if (e.vertex == undefined) {
+          //   console.log("RETURNING VERTEX EMPTY");
+          //   return;
+          // }
+          console.log("Right click of path detected");
+          console.log(e);
+          flightMenu.show(e);
+          //deleteMenu.open(map, flightPath.getPath(), e.vertex);
+        });
 
 }
 
 function centreMap(latLng){
   map.setCenter(latLng);
 }
+
 
 function clearMap(){
   deleteAllMarkers();
@@ -165,13 +228,18 @@ function deleteAllPaths(){
   paths=[]
 }
 
-function placeMarker(latLng, map) {
+function placeMarker(e,latLng, map) {
+        console.log("place marker event:");
+        //onsole.log(event);
+        //latLng = event.latLng;
         var marker = new google.maps.Marker({
           position: latLng,
           map: map,
           label: labels[labelIndex++ % labels.length]
         });
         //add marker to arraylist
+        var path = flightPath.getPath();
+        path.push(latLng);
         latLngs.push(latLng);
         markers.push(marker);
 
@@ -196,14 +264,16 @@ function placeMarker(latLng, map) {
         var contextMenu = new ContextMenu(map, contextMenuOptions);
 
          google.maps.event.addListener(contextMenu, 'menu_item_selected',
-            function(latLng, eventName, source){
-            console.log(latLng);
+            function(event, eventName, source){
+            //console.log("Marker right click selected item with latlng " +latLng);
+            console.log("Menu item marker context menu event:");
+            console.log(event);
 
             switch(eventName){
               case 'delete_clicked':
                 // do something
-                alert("Delete marker clicked");
-                deleteMarker(latLng);
+              //  alert("Delete marker clicked");
+                deleteMarker(event.latLng);
                 break;
               case 'change_clicked':
                 // do something else
@@ -229,48 +299,69 @@ function placeMarker(latLng, map) {
           //alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
 
           //contextMenu.show(mouseEvent.latLng, map);
-          contextMenu.show(mouseEvent.latLng);
+          console.log(mouseEvent);
+          contextMenu.show(mouseEvent);
           //contextMenu.show(mouseEvent.latLng);
 
 
         });
 
-        var lineSymbol = {
-          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
-        };
-
-        var flightPath = new google.maps.Polyline({
-                  path: latLngs,
-                  geodesic: true,
-                  strokeColor: '#FF0000',
-                  strokeOpacity: 1.0,
-                  strokeWeight: 2,
-                  icons: [{
-                      icon: lineSymbol,
-                      offset: '100%'
-                    }]
-                });
-        flightPath.setMap(map);
-        paths.push(flightPath);
+        // var lineSymbol = {
+        //   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+        // };
+        //
+        // var flightPath = new google.maps.Polyline({
+        //           path: latLngs,
+        //           editable: true,
+        //           geodesic: true,
+        //           strokeColor: '#FF0000',
+        //           strokeOpacity: 1.0,
+        //           strokeWeight: 2,
+        //           icons: [{
+        //               icon: lineSymbol,
+        //               offset: '100%'
+        //             }]
+        //         });
+        // flightPath.setMap(map);
+        // paths.push(flightPath);
       //  map.panTo(latLng);
       }
-function deleteMarker(latLng){
-  deleteAllMarkers();
-  deleteAllPaths();
+function setMapOnMarker(marker,map){
+    marker.setMap(map);
+}
+
+function findMarker(latLng){
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      return markers[index];
+    }
+
+  }
+}
+function deleteMarker(latLng){
+  //deleteAllMarkers();
+  //deleteAllPaths();
+  listMarkers();
+  console.log(latLng);
+  console.log(latLng.lat());
+  //setMapOnMarker();
+  for(var index =0; index<this.latLngs.length;++index) {
+    if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      setMapOnMarker(markers[index],null);
       this.latLngs.splice(index,1);
       this.markers.splice(index,1);
     }
+
   }
   listMarkers();
-  reorderMarkers();
+  //reorderMarkers();
 
 }
 
 function setMapOnAllMarkers(map) {
         for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
+          //markers[i].setMap(map);
+          setMapOnMarker(markers[i],map);
         }
       }
 function setMapOnAllPaths(map) {
