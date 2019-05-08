@@ -350,6 +350,11 @@ function deleteMarker(latLng){
       setMapOnMarker(markers[index],null);
       this.latLngs.splice(index,1);
       this.markers.splice(index,1);
+      var path = flightPath.getPath();
+      path.removeAt(index);
+      //path.splice(index,1);
+      //path = [];
+
     }
 
   }
@@ -382,6 +387,14 @@ function reorderMarkers(){
 function listMarkers(){
   for(var index =0; index<this.latLngs.length;++index) {
     console.log("Lat " + latLngs[index].lat() + " Long " + latLngs[index].lng());
+  }
+}
+
+function listPaths(){
+  path = flightPath.getPath();
+  console.log(path);
+  for(var index =0; index<path.length;++index) {
+    console.log("Lat " + path.getAt(index).lat() + " Long " + path.getAt(index).lng());
   }
 }
 
