@@ -57,8 +57,10 @@ function initMap() {
   var lineSymbol = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
   };
-
+  var path = new google.maps.MVCArray([
+  ]);
   flightPath = new google.maps.Polyline({
+            path: path,
             editable: true,
             geodesic: true,
             strokeColor: '#FF0000',
@@ -75,7 +77,7 @@ function initMap() {
 
   //disable for now to test context menu
   map.addListener('click', function(e) {
-           placeMarker(e,e.latLng, map);
+           placeMarker(e,e.latLng, map,-1,true);
          });
 
   mapInit = true;
@@ -187,6 +189,20 @@ function initMap() {
 
 
   });
+  google.maps.event.addListener(path, 'insert_at', function(vertex) {
+
+	   console.log('Vertex '+ vertex + ' inserted to path.')
+     latLng=flightPath.getPath().getAt(vertex);
+     if(!latLngExists(latLng)){
+       console.log("Marker doesn't exist so creating new one");
+       placeMarker(null,latLng,map,vertex,false);
+     }
+   });
+
+   google.maps.event.addListener(path, 'set_at', function(vertex) {
+     console.log('Vertex '+ vertex + ' set to new location.')
+    });
+
   google.maps.event.addListener(flightPath, 'rightclick', function(e) {
       //alert("Right click of path detected");
           // Check if click was on a vertex control point
@@ -199,6 +215,7 @@ function initMap() {
           flightMenu.show(e);
           //deleteMenu.open(map, flightPath.getPath(), e.vertex);
         });
+
 
 }
 
@@ -228,7 +245,16 @@ function deleteAllPaths(){
   paths=[]
 }
 
-function placeMarker(e,latLng, map) {
+function latLngExists(latLng){
+  if(findMarker(latLng)!=null){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
+
+function placeMarker(e,latLng, map, position,needPath) {
         console.log("place marker event:");
         //onsole.log(event);
         //latLng = event.latLng;
@@ -239,10 +265,27 @@ function placeMarker(e,latLng, map) {
         });
         //add marker to arraylist
         var path = flightPath.getPath();
-        path.push(latLng);
-        latLngs.push(latLng);
-        markers.push(marker);
+        //console.log(path);
+        //path.insertAt(path.length);
+        if(position==-1){
+          //must push latLngs and markers first or else we may prematurely
+          //trigger MVC insert_at event
+          latLngs.push(latLng);
+          markers.push(marker);
+          if(needPath){
+            path.push(latLng);
+          }
 
+        }
+        else{
+          latLngs.splice(1,0,latLng);
+          markers.splice(1,0,latLng);
+          if(needPath){
+            path.insertAt(position,latLng);
+          }
+
+
+        }
         var contextMenuOptions  = {
          	classNames: menuStyle,
          	menuItems: [
@@ -333,10 +376,11 @@ function setMapOnMarker(marker,map){
 function findMarker(latLng){
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      console.log("Found marker at index " + index);
       return markers[index];
     }
-
   }
+  return null;
 }
 function deleteMarker(latLng){
   //deleteAllMarkers();
@@ -352,6 +396,7 @@ function deleteMarker(latLng){
       this.markers.splice(index,1);
       var path = flightPath.getPath();
       path.removeAt(index);
+
       //path.splice(index,1);
       //path = [];
 
