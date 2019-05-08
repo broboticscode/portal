@@ -200,7 +200,12 @@ function initMap() {
    });
 
    google.maps.event.addListener(path, 'set_at', function(vertex) {
-     console.log('Vertex '+ vertex + ' set to new location.')
+     latLngNew=flightPath.getPath().getAt(vertex);
+     latLngOld=latLngs[vertex];
+
+     updateMarker(latLngOld,latLngNew);
+     console.log("LatLngOld is " + latLngOld + " LatLngNew is " + latLngNew);
+     console.log('Vertex '+ vertex + ' set to new location.');
     });
 
   google.maps.event.addListener(flightPath, 'rightclick', function(e) {
@@ -242,7 +247,24 @@ function deleteAllLatLngs(){
 
 function deleteAllPaths(){
   setMapOnAllPaths(null);
-  paths=[]
+  paths=[];
+}
+function updateMarker(latLngOld, latLngNew){
+    marker=findMarker(latLngOld);
+    marker.setPosition(latLngNew);
+    index = findLatLng(latLngOld);
+    latLngs[index]=latLngNew;
+}
+
+function findLatLng(latLng){
+  for(var index =0; index<this.latLngs.length;++index) {
+    if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
+      console.log("Found latlng at index " + index);
+      return index;
+    }
+  }
+  return null;
+
 }
 
 function latLngExists(latLng){
@@ -397,6 +419,8 @@ function deleteMarker(latLng){
       var path = flightPath.getPath();
       path.removeAt(index);
 
+
+
       //path.splice(index,1);
       //path = [];
 
@@ -429,9 +453,15 @@ function reorderMarkers(){
 
 }
 
-function listMarkers(){
+function listLatLngs(){
   for(var index =0; index<this.latLngs.length;++index) {
     console.log("Lat " + latLngs[index].lat() + " Long " + latLngs[index].lng());
+  }
+}
+
+function listMarkers(){
+  for(var index =0; index<this.latLngs.length;++index) {
+    console.log("Lat " + markers[index].position.lat() + " Long " + markers[index].position.lng());
   }
 }
 
@@ -444,7 +474,7 @@ function listPaths(){
 }
 
 
-function updateMarker(lat, lng){
+function updateRobotMarker(lat, lng){
   //var myLatLng = {lat: -25.363, lng: 131.044};
   var myLatLng = {lat: lat, lng: lng};
 
