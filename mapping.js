@@ -407,7 +407,7 @@ function setMapOnMarker(marker,map){
 function shiftLabelsRight(index){
   for(var index =index; index<this.markers.length;++index) {
     var num= Number(markers[index].label)+1
-    markers[index].setLabel(num.toString());    }
+    markers[index].setLabel(labels[num]);    }
   }
 
 //Shift the labels to the left for deleting a marker
@@ -415,7 +415,7 @@ function shiftLabelsRight(index){
 function shiftLabelsLeft(index){
   for(var index =index+1; index<this.markers.length;++index) {
       var num= Number(markers[index].label)-1
-      markers[index].setLabel(num.toString());
+      markers[index].setLabel(labels[num]);
       //markers[index].setLabel("TEST");
     }
   }
