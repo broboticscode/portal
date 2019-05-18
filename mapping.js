@@ -6,13 +6,17 @@ var manager;
 var teleop;
 var ros;
 var map;
-var flightPath;
+var plannedPath;
+var robotPath;
+
 var mapInit;
 var currentMarker;
 var robotMarker;
 var markers = [];
 var latLngs = [];
 var paths = [];
+var robotPaths = [];
+
 //var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labels = 'H123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -60,7 +64,7 @@ function initMap() {
   };
   var path = new google.maps.MVCArray([
   ]);
-  flightPath = new google.maps.Polyline({
+  plannedPath = new google.maps.Polyline({
             path: path,
             editable: true,
             geodesic: true,
@@ -72,8 +76,25 @@ function initMap() {
                 offset: '100%'
               }]
           });
-  flightPath.setMap(map);
-//  paths.push(flightPath);
+  plannedPath.setMap(map);
+
+
+  var path = new google.maps.MVCArray([
+  ]);
+  robotPath = new google.maps.Polyline({
+            path: path,
+            editable: false,
+            geodesic: true,
+            strokeColor: '#00FF00',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+            icons: [{
+                icon: lineSymbol,
+                offset: '100%'
+              }]
+          });
+  robotPath.setMap(map);
+//  paths.push(plannedPath);
   //google.maps.event.addListener(map,  'rightclick',  function(mouseEvent) { alert('Right click triggered'); });
 
   //disable for now to test context menu
@@ -193,7 +214,7 @@ function initMap() {
   google.maps.event.addListener(path, 'insert_at', function(vertex) {
 
 	   console.log('Vertex '+ vertex + ' inserted to path.')
-     latLng=flightPath.getPath().getAt(vertex);
+     latLng=plannedPath.getPath().getAt(vertex);
      if(!latLngExists(latLng)){
        console.log("Marker doesn't exist so creating new one");
        placeMarker(null,latLng,map,vertex,false);
@@ -201,7 +222,7 @@ function initMap() {
    });
 
    google.maps.event.addListener(path, 'set_at', function(vertex) {
-     latLngNew=flightPath.getPath().getAt(vertex);
+     latLngNew=plannedPath.getPath().getAt(vertex);
      latLngOld=latLngs[vertex];
 
      updateMarker(latLngOld,latLngNew);
@@ -209,7 +230,7 @@ function initMap() {
      console.log('Vertex '+ vertex + ' set to new location.');
     });
 
-  google.maps.event.addListener(flightPath, 'rightclick', function(e) {
+  google.maps.event.addListener(plannedPath, 'rightclick', function(e) {
       //alert("Right click of path detected");
           // Check if click was on a vertex control point
           // if (e.vertex == undefined) {
@@ -219,7 +240,7 @@ function initMap() {
           console.log("Right click of path detected");
           console.log(e);
           flightMenu.show(e);
-          //deleteMenu.open(map, flightPath.getPath(), e.vertex);
+          //deleteMenu.open(map, plannedPath.getPath(), e.vertex);
         });
 
 
@@ -294,7 +315,7 @@ function placeMarker(e,latLng, map, position,needPath) {
           label: labelNum
         });
         //add marker to arraylist
-        var path = flightPath.getPath();
+        var path = plannedPath.getPath();
         //console.log(path);
         //path.insertAt(path.length);
         if(position==-1){
@@ -384,7 +405,7 @@ function placeMarker(e,latLng, map, position,needPath) {
         //   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
         // };
         //
-        // var flightPath = new google.maps.Polyline({
+        // var plannedPath = new google.maps.Polyline({
         //           path: latLngs,
         //           editable: true,
         //           geodesic: true,
@@ -396,12 +417,12 @@ function placeMarker(e,latLng, map, position,needPath) {
         //               offset: '100%'
         //             }]
         //         });
-        // flightPath.setMap(map);
-        // paths.push(flightPath);
+        // plannedPath.setMap(map);
+        // paths.push(plannedPath);
       //  map.panTo(latLng);
       }
 function refreshRobotMarker(lat,lng) {
-      console.log("place marker event:");
+      console.log("refresh robot marker function:");
       //onsole.log(event);
       //latLng = event.latLng;
       // var labelNum=0;
@@ -411,24 +432,25 @@ function refreshRobotMarker(lat,lng) {
       // else{
       //   labelNum=labels[position % labels.length].toString();
       // }
+      if(robotMarker!=null){
+        robotMarker.setMap(null);
+      }
       latLng = new google.maps.LatLng(lat, lng);
       var marker = new google.maps.Marker({
         position: latLng,
         map: map,
-        label: "r"
+        icon: '/defender_resized.png'
       });
+      robotMarker = marker;
       //add marker to arraylist
-      var path = flightPath.getPath();
-      //console.log(path);
-      //path.insertAt(path.length);
-      // if(position==-1){
-      //   //must push latLngs and markers first or else we may prematurely
-      //   //trigger MVC insert_at event
-      //   latLngs.push(latLng);
-      //   markers.push(marker);
-      //   if(needPath){
-      //     path.push(latLng);
-      //   }
+      var path = robotPath.getPath();
+      path.push(latLng);
+
+      //latLngs.push(latLng);
+      //markers.push(marker);
+      // if(needPath){
+      //   path.push(latLng);
+      // }
       //
       // }
       // else{
@@ -508,7 +530,7 @@ function refreshRobotMarker(lat,lng) {
       //   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
       // };
       //
-      // var flightPath = new google.maps.Polyline({
+      // var plannedPath = new google.maps.Polyline({
       //           path: latLngs,
       //           editable: true,
       //           geodesic: true,
@@ -520,8 +542,8 @@ function refreshRobotMarker(lat,lng) {
       //               offset: '100%'
       //             }]
       //         });
-      // flightPath.setMap(map);
-      // paths.push(flightPath);
+      // plannedPath.setMap(map);
+      // paths.push(plannedPath);
     //  map.panTo(latLng);
 }
 
@@ -548,6 +570,9 @@ function shiftLabelsLeft(index){
 
 
 function findMarker(latLng){
+  if(latLng==null){
+    return null;
+  }
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
       console.log("Found marker at index " + index);
@@ -569,7 +594,7 @@ function deleteMarker(latLng){
       setMapOnMarker(markers[index],null);
       this.latLngs.splice(index,1);
       this.markers.splice(index,1);
-      var path = flightPath.getPath();
+      var path = plannedPath.getPath();
       path.removeAt(index);
 
 
@@ -619,7 +644,7 @@ function listMarkers(){
 }
 
 function listPaths(){
-  path = flightPath.getPath();
+  path = plannedPath.getPath();
   console.log(path);
   for(var index =0; index<path.length;++index) {
     console.log("Lat " + path.getAt(index).lat() + " Long " + path.getAt(index).lng());
@@ -627,23 +652,13 @@ function listPaths(){
 }
 
 
-function updateRobotMarker(lat, lng){
-  //var myLatLng = {lat: -25.363, lng: 131.044};
-  var myLatLng = {lat: lat, lng: lng};
-
-  // var marker = new google.maps.Marker({
-  //   position: myLatLng,
-  //   map: map,
-  //   title: 'Hello World!'
-  // });
-
-  // currentMarker.setMap(null);
-  // currentMarker = null;
-  // currentMarker = marker;
-  currentMarker.setPosition(myLatLng);
-  currentMarker.setMap(map);
-
-}
+// function updateRobotMarker(lat, lng){
+//   var myLatLng = {lat: lat, lng: lng};
+//
+//   currentMarker.setPosition(myLatLng);
+//   currentMarker.setMap(map);
+//
+// }
 
 function fixListener(){
 
