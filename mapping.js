@@ -9,6 +9,7 @@ var map;
 var flightPath;
 var mapInit;
 var currentMarker;
+var robotMarker;
 var markers = [];
 var latLngs = [];
 var paths = [];
@@ -399,6 +400,131 @@ function placeMarker(e,latLng, map, position,needPath) {
         // paths.push(flightPath);
       //  map.panTo(latLng);
       }
+function refreshRobotMarker(lat,lng) {
+      console.log("place marker event:");
+      //onsole.log(event);
+      //latLng = event.latLng;
+      // var labelNum=0;
+      // if(position==-1){
+      //   labelNum=labels[markers.length % labels.length].toString();
+      // }
+      // else{
+      //   labelNum=labels[position % labels.length].toString();
+      // }
+      latLng = new google.maps.LatLng(lat, lng);
+      var marker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        label: "r"
+      });
+      //add marker to arraylist
+      var path = flightPath.getPath();
+      //console.log(path);
+      //path.insertAt(path.length);
+      // if(position==-1){
+      //   //must push latLngs and markers first or else we may prematurely
+      //   //trigger MVC insert_at event
+      //   latLngs.push(latLng);
+      //   markers.push(marker);
+      //   if(needPath){
+      //     path.push(latLng);
+      //   }
+      //
+      // }
+      // else{
+      //   shiftLabelsRight(position);
+      //   latLngs.splice(position,0,latLng);
+      //   markers.splice(position,0,marker);
+      //   if(needPath){
+      //     path.insertAt(position,latLng);
+      //   }
+
+
+
+      var contextMenuOptions  = {
+       	classNames: menuStyle,
+       	menuItems: [
+       		{ label:'Delete Marker', id:'menu_option1',
+       			className: 'dropdown-item', eventName:'delete_clicked' },
+            { label:'Change Marker Position', id:'menu_option2',
+         			className: 'dropdown-item', eventName:'change_clicked' },
+       		{ },
+          { label:'Set Home Marker', id:'menu_option3',
+       			className: 'dropdown-item', eventName:'sethome_clicked' },
+            { },
+            { label:'Center on Marker', id:'menu_option4',
+         			className: 'dropdown-item', eventName:'centermarker_clicked' }
+       	],
+       	pixelOffset: new google.maps.Point(0, 0),
+       	zIndex: 5
+       };
+
+      var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+       google.maps.event.addListener(contextMenu, 'menu_item_selected',
+          function(event, eventName, source){
+          //console.log("Marker right click selected item with latlng " +latLng);
+          console.log("Menu item marker context menu event:");
+          console.log(event);
+
+          switch(eventName){
+            case 'delete_clicked':
+              // do something
+            //  alert("Delete marker clicked");
+              deleteMarker(event.latLng);
+              break;
+            case 'change_clicked':
+              // do something else
+              alert("Marker Option 2 clicked");
+
+              break;
+            case 'sethome_clicked':
+              // do something else
+              alert("Marker Option 3 clicked");
+
+              break;
+            case 'centermarker_clicked':
+              centerMap(latLng);
+              break;
+            default:
+              // freak out
+              break;
+          }
+          contextMenu.hide();
+      });
+
+      google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
+        //alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
+
+        //contextMenu.show(mouseEvent.latLng, map);
+        console.log(mouseEvent);
+        contextMenu.show(mouseEvent);
+        //contextMenu.show(mouseEvent.latLng);
+
+
+      });
+
+      // var lineSymbol = {
+      //   path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+      // };
+      //
+      // var flightPath = new google.maps.Polyline({
+      //           path: latLngs,
+      //           editable: true,
+      //           geodesic: true,
+      //           strokeColor: '#FF0000',
+      //           strokeOpacity: 1.0,
+      //           strokeWeight: 2,
+      //           icons: [{
+      //               icon: lineSymbol,
+      //               offset: '100%'
+      //             }]
+      //         });
+      // flightPath.setMap(map);
+      // paths.push(flightPath);
+    //  map.panTo(latLng);
+}
+
 function setMapOnMarker(marker,map){
     marker.setMap(map);
 }
@@ -538,7 +664,7 @@ function fixListener(){
   listener.subscribe(function(message) {
     console.log('Received latitude ' + listener.name + ': ' + message.latitude);
     console.log('Received longitude ' + listener.name + ': ' + message.longitude);
-    updateMarker(message.latitude,message.longitude)
+    refreshRobotMarker(message.latitude,message.longitude)
 
     console.log('Received type ' + typeof(message));
   //  listener.unsubscribe();
@@ -572,8 +698,8 @@ function connect(){
 
 window.onload = function () {
   //turned off connection temporarily
-  //connect();
-  //fixListener();
+  connect();
+  fixListener();
 
   //temporarily manually invoke this
   initMap();
