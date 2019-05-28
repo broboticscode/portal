@@ -268,8 +268,14 @@ function deleteAllLatLngs(){
 }
 
 function deleteAllPaths(){
-  setMapOnAllPaths(null);
-  paths=[];
+  // setMapOnAllPaths(null);
+  // paths=[];
+  plannedPath.setPath([]);
+
+  //
+  // robotPath.setMap(null);
+  // robotPath=null;
+
 }
 function updateMarker(latLngOld, latLngNew){
     marker=findMarker(latLngOld);
