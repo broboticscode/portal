@@ -157,7 +157,7 @@ function initMap() {
     		case 'addmarker_clicked':
     			// do something else
           //alert("Option 2 clicked")
-          placeMarker(event.latLng,map);
+          placeMarker(event,event.latLng,map,-1,1);
 
     			break;
         case 'deleteAll_clicked':
