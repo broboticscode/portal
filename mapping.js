@@ -36,7 +36,17 @@ var menuStyle = {
 
 
 
+/*
+Main map initialisation function
 
+Mapping:
+Creates map. Also creates path vector for movement plan and path vector for
+current robot motion
+
+Context Menu:
+Creates right click context menu with 
+
+*/
 function initMap() {
 
   var myLatLng = {lat: -33.8284721, lng: 151.19212733};

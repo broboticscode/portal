@@ -112,16 +112,18 @@ function createJoystick() {
 }
 
 function connect(){
-  // determine robot address automatically
-  // robot_IP = location.hostname;
-  // set robot address statically
+  //IP Address of robot, can be local or global
+  //If using global recommended to use a dynamic dns like noip
+
+  //global connection requires port forwarding on port 80 for webserver
+  // and port 9090 for rosbridge
   robot_IP = "127.0.0.1";
 
   // // Init handle for rosbridge_websocket
+  //Connect to ros master on robot using roslibjs on client and rosbridge on robot
   ros = new ROSLIB.Ros({
       url: "ws://" + robot_IP + ":9090"
   });
-  //window.alert("u r dum");
 
   ros.on('connection', function() {
    console.log('Connected to websocket server.');
@@ -138,15 +140,18 @@ function connect(){
 
 window.onload = function () {
 
+    //setup ROS connection
     connect();
     initVelocityPublisher();
 
     // get handle for video placeholder
     video = document.getElementById('video');
+
     // Populate video source using ros
   //  video.src = "http://" + robot_IP + ":8080/stream?topic=/camera/rgb/image_raw&type=mjpeg&quality=80";
+
     //populate video source using uv4l
-      video.src = "http://" + robot_IP + ":8080/stream/video.mjpeg";
+    video.src = "http://" + robot_IP + ":8080/stream/video.mjpeg";
 
     video.onload = function () {
         // joystick and keyboard controls will be available only when video is correctly loaded
