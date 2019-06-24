@@ -277,6 +277,8 @@ function deleteAllPaths(){
   // robotPath=null;
 
 }
+
+//Update a given marker on the map with a new location
 function updateMarker(latLngOld, latLngNew){
     marker=findMarker(latLngOld);
     marker.setPosition(latLngNew);
@@ -284,6 +286,7 @@ function updateMarker(latLngOld, latLngNew){
     latLngs[index]=latLngNew;
 }
 
+//Give a lat lng pair, find its corresponding index in the global latlng list
 function findLatLng(latLng){
   for(var index =0; index<this.latLngs.length;++index) {
     if(latLng.lat()==this.latLngs[index].lat() && latLng.lng()==this.latLngs[index].lng()){
@@ -295,6 +298,7 @@ function findLatLng(latLng){
 
 }
 
+//Check if a given lat lng pair already exists in the global latlng list
 function latLngExists(latLng){
   if(findMarker(latLng)!=null){
     return 1;
@@ -304,10 +308,23 @@ function latLngExists(latLng){
   }
 }
 
+/*placeMarker
+
+Place a marker at a given lat lng location on a specific map
+
+e: the event that triggered this function call, may be empty or a context menu
+latlng: the lat lng pair of the target marker
+map: the map we wish to display the marker on
+position: what position in the marker heirarchy do we insert this marker,
+          if just to the end then use -1
+needPath: does this marker need to have some sort of path connected to it
+
+
+*/
 function placeMarker(e,latLng, map, position,needPath) {
-        console.log("place marker event:");
-        //onsole.log(event);
-        //latLng = event.latLng;
+        console.log("The place marker function has been called:");
+
+        //Determine which label to assign the marker based on the position fed into the method
         var labelNum=0;
         if(position==-1){
           labelNum=labels[markers.length % labels.length].toString();
@@ -315,6 +332,8 @@ function placeMarker(e,latLng, map, position,needPath) {
         else{
           labelNum=labels[position % labels.length].toString();
         }
+
+        //Create a new marker object ready for insertion onto the map
         var marker = new google.maps.Marker({
           position: latLng,
           map: map,
@@ -322,8 +341,7 @@ function placeMarker(e,latLng, map, position,needPath) {
         });
         //add marker to arraylist
         var path = plannedPath.getPath();
-        //console.log(path);
-        //path.insertAt(path.length);
+        //If no specific marker position is requested
         if(position==-1){
           //must push latLngs and markers first or else we may prematurely
           //trigger MVC insert_at event
@@ -335,15 +353,16 @@ function placeMarker(e,latLng, map, position,needPath) {
 
         }
         else{
+          //If the marker is to be inserted anywhere other than the end we will need to shift the labels
           shiftLabelsRight(position);
           latLngs.splice(position,0,latLng);
           markers.splice(position,0,marker);
           if(needPath){
             path.insertAt(position,latLng);
           }
-
-
         }
+
+        //Custom context menu for when the marker icon is right clicked
         var contextMenuOptions  = {
          	classNames: menuStyle,
          	menuItems: [
@@ -362,8 +381,10 @@ function placeMarker(e,latLng, map, position,needPath) {
          	zIndex: 5
          };
 
+         //Build the contextmenu with the previously set options
         var contextMenu = new ContextMenu(map, contextMenuOptions);
 
+        //Add the listeners to the built context menu
          google.maps.event.addListener(contextMenu, 'menu_item_selected',
             function(event, eventName, source){
             //console.log("Marker right click selected item with latlng " +latLng);
@@ -396,6 +417,7 @@ function placeMarker(e,latLng, map, position,needPath) {
             contextMenu.hide();
         });
 
+        //Open the marker context menu when a marker icon is right clicked
         google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
           //alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
 
@@ -403,7 +425,6 @@ function placeMarker(e,latLng, map, position,needPath) {
           console.log(mouseEvent);
           contextMenu.show(mouseEvent);
           //contextMenu.show(mouseEvent.latLng);
-
 
         });
 
@@ -427,21 +448,19 @@ function placeMarker(e,latLng, map, position,needPath) {
         // paths.push(plannedPath);
       //  map.panTo(latLng);
       }
+
+//Refresh the location of live robot marker on the map given separate lat lngs
 function refreshRobotMarker(lat,lng) {
-      console.log("refresh robot marker function:");
-      //onsole.log(event);
-      //latLng = event.latLng;
-      // var labelNum=0;
-      // if(position==-1){
-      //   labelNum=labels[markers.length % labels.length].toString();
-      // }
-      // else{
-      //   labelNum=labels[position % labels.length].toString();
-      // }
+      console.log("Refreshing live robot marker");
+
+      //Check if there exists a robot marker, if there is then get rid of it by setting map to null
       if(robotMarker!=null){
         robotMarker.setMap(null);
       }
+      //Convert separate lat lngs into latlng pair
       latLng = new google.maps.LatLng(lat, lng);
+
+      //Create the marker object with the defender icon!
       var marker = new google.maps.Marker({
         position: latLng,
         map: map,
@@ -468,7 +487,7 @@ function refreshRobotMarker(lat,lng) {
       //   }
 
 
-
+      //Create context menu for when we right click the live robot icon
       var contextMenuOptions  = {
        	classNames: menuStyle,
        	menuItems: [
@@ -487,6 +506,7 @@ function refreshRobotMarker(lat,lng) {
        	zIndex: 5
        };
 
+       //Create context menu object
       var contextMenu = new ContextMenu(map, contextMenuOptions);
 
        google.maps.event.addListener(contextMenu, 'menu_item_selected',
