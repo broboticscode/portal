@@ -5,25 +5,26 @@ var robot_IP;
 var manager;
 var teleop;
 var ros;
-var map;
-var plannedPath;
-var robotPath;
+var map; //Main map object
+var plannedPath; //Path planned in advance for robot
+var robotPath; //Path that the robot is currently taking
 
 var mapInit;
 var currentMarker;
-var robotMarker;
-var markers = [];
-var latLngs = [];
+var robotMarker; //Current location of the robot
+var markers = []; //List of all marker
+var latLngs = []; //List of all latitude longitude pairs
 var paths = [];
 var robotPaths = [];
 
 //var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+//Labels numbers and letters to cycle through when placing markers on map
 var labels = 'H123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+//Keep track of which label to use
 var labelIndex = 0;
 
-//var contextMenuOptions = null;
-//var contextMenu = null;
+//Import context menu code so we can right click the map and markers
 $.getScript("context-menu.js", function() {
   //alert("Import worked");
 });
@@ -44,7 +45,7 @@ Creates map. Also creates path vector for movement plan and path vector for
 current robot motion
 
 Context Menu:
-Creates right click context menu with 
+Creates right click context menu with
 
 */
 function initMap() {
@@ -55,7 +56,7 @@ function initMap() {
     map: map,
     title: 'FIRST HARD CODED MARKER'
   });
-  //create map with options, currently have POIs turned off
+  //create map and center on a position in Sydney, currently have POIs turned off
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 16,
     center: myLatLng,
@@ -68,12 +69,14 @@ function initMap() {
     }
   ]
   });
-
+//define a line symbol to use when making the planning path, currently a forward arrow
   var lineSymbol = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
   };
+  //forcibly make an MVCArray so we can get callbacks from Gmaps API on planned path updates
   var path = new google.maps.MVCArray([
   ]);
+  //Create the planned path Gmaps polyline object and set its variables
   plannedPath = new google.maps.Polyline({
             path: path,
             editable: true,
@@ -86,11 +89,15 @@ function initMap() {
                 offset: '100%'
               }]
           });
+  //attach the planned path to the map so we can see it
   plannedPath.setMap(map);
 
+  //forcibly make an MVCArray so we can get callbacks from Gmaps API on robot path updates
 
   var path = new google.maps.MVCArray([
   ]);
+  //Create the robot path Gmaps polyline object and set its variables
+
   robotPath = new google.maps.Polyline({
             path: path,
             editable: false,
@@ -104,7 +111,6 @@ function initMap() {
               }]
           });
   robotPath.setMap(map);
-//  paths.push(plannedPath);
   //google.maps.event.addListener(map,  'rightclick',  function(mouseEvent) { alert('Right click triggered'); });
 
   //disable for now to test context menu
@@ -114,31 +120,7 @@ function initMap() {
 
   mapInit = true;
 
-
-
-
-
-  // map.setContextMenu({
-  //   control: 'map',
-  //   options: [{
-  //     title: 'Add marker',
-  //     name: 'add_marker',
-  //     action: function(e) {
-  //       this.addMarker({
-  //         lat: e.latLng.lat(),
-  //         lng: e.latLng.lng(),
-  //         title: 'New marker'
-  //       });
-  //     }
-  //   }, {
-  //     title: 'Center here',
-  //     name: 'center_here',
-  //     action: function(e) {
-  //       this.setCenter(e.latLng.lat(), e.latLng.lng());
-  //     }
-  //   }]
-  // });
-
+//Set the right click context menu options and their listener event names
   var contextMenuOptions  = {
    	classNames: menuStyle,
    	menuItems: [
@@ -153,9 +135,9 @@ function initMap() {
    	pixelOffset: new google.maps.Point(0, 0),
    	zIndex: 5
    };
-
+//Create the context menu object with the options we just outlined
   var contextMenu = new ContextMenu(map, contextMenuOptions);
-
+//Define what to do if a listener callback is triggered
    google.maps.event.addListener(contextMenu, 'menu_item_selected',
     	function(event, eventName, source){
     	switch(eventName){
@@ -168,19 +150,19 @@ function initMap() {
     			// do something else
           //alert("Option 2 clicked")
           placeMarker(event,event.latLng,map,-1,1);
-
     			break;
         case 'deleteAll_clicked':
     			// do something else
           clearMap();
     			break;
     		default:
-    			// freak out
+    			//Event wasn't captured properly
     			break;
     	}
+      //Once we've dealt with the callback hide the context menu
     	contextMenu.hide();
   });
-
+//Define context menu options for the actual paths between markers
   var flightMenuOptions  = {
    	classNames: menuStyle,
    	menuItems: [
@@ -190,9 +172,10 @@ function initMap() {
    	pixelOffset: new google.maps.Point(0, 0),
    	zIndex: 5
    };
-
+   //Create the context menu object with the options we just outlined
   var flightMenu = new ContextMenu(map, flightMenuOptions);
 
+  //Define what to do if a listener callback is triggered
    google.maps.event.addListener(flightMenu, 'menu_item_selected',
     	function(e, eventName, source){
       console.log("Flight menu item selected triggered");
@@ -202,16 +185,15 @@ function initMap() {
     			// do something
           console.log("Delete edge " + e.edge);
           //alert("Delete edge  called")
-          //centreMap(latLng);
     			break;
 
     		default:
-    			// freak out
+    			//Couldn'nt find the actual callback event
     			break;
     	}
     	flightMenu.hide();
   });
-
+//Set the generic map right click context menu to fire on right clicking anywhere random on the map
   google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
     //alert('Right click triggered');
 
@@ -219,8 +201,10 @@ function initMap() {
     contextMenu.show(mouseEvent);
     //contextMenu.show(mouseEvent.latLng);
 
-
   });
+  //Define a listener for the insert_at event of the path MVCArray
+  //This event is triggered whenever any item is added to the path either by the user
+  //explicitely or implicitely via dragging the midpoint handles
   google.maps.event.addListener(path, 'insert_at', function(vertex) {
 
 	   console.log('Vertex '+ vertex + ' inserted to path.')
@@ -230,6 +214,7 @@ function initMap() {
        placeMarker(null,latLng,map,vertex,false);
      }
    });
+   //This set_at event is triggered whenever any item in the path MVCArray is updated
 
    google.maps.event.addListener(path, 'set_at', function(vertex) {
      latLngNew=plannedPath.getPath().getAt(vertex);
@@ -240,6 +225,7 @@ function initMap() {
      console.log('Vertex '+ vertex + ' set to new location.');
     });
 
+//Apply right click flight context menu to the planned flightpath
   google.maps.event.addListener(plannedPath, 'rightclick', function(e) {
       //alert("Right click of path detected");
           // Check if click was on a vertex control point
@@ -256,27 +242,31 @@ function initMap() {
 
 }
 
+//Centre the map on a lat lng pair
 function centreMap(latLng){
   map.setCenter(latLng);
 }
 
-
+//Clear all the items off the map including markers and paths
 function clearMap(){
   deleteAllMarkers();
   deleteAllPaths();
   deleteAllLatLngs();
 }
 
+//Iteratively delete all markers from the map
 function deleteAllMarkers(){
   labelIndex=0;
   setMapOnAllMarkers(null);
   markers=[];
 }
 
+//Clear the LatLngs list
 function deleteAllLatLngs(){
   latLngs=[];
 }
 
+//Delete all paths stored in the planned path set
 function deleteAllPaths(){
   // setMapOnAllPaths(null);
   // paths=[];
