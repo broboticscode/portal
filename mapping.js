@@ -724,19 +724,23 @@ function connect(){
   //Connect to ros master on robot using roslibjs on client and rosbridge on robot  ros = new ROSLIB.Ros({
       url: "ws://" + robot_IP + ":9090"
   });
+
+  //If we successfully connect to the robot then log it to console
     ros.on('connection', function() {
      console.log('Connected to websocket server.');
   });
+  //If we can't connect to robot then print an error to console
     ros.on('error', function(error) {
    console.log('Error connecting to websocket server: ', error);
   });
-
+  //If for some reason our connection drops then print it to console
     ros.on('close', function() {
    console.log('Connection to websocket server closed.');
   });
 
 }
 
+//Once window DOM has loaded run our javascript
 window.onload = function () {
 
   //setup ROS connection

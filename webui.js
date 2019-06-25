@@ -138,26 +138,30 @@ function connect(){
 
 }
 
+//Once window DOM has loaded run our javascript
 window.onload = function () {
 
     //setup ROS connection
     connect();
+
+    //Start the ros node to publish on cmd_vel topic
     initVelocityPublisher();
 
     // get handle for video placeholder
     video = document.getElementById('video');
 
-    // Populate video source using ros
+    //Populate video source using ros
   //  video.src = "http://" + robot_IP + ":8080/stream?topic=/camera/rgb/image_raw&type=mjpeg&quality=80";
 
-    //populate video source using uv4l
+    //Populate video source using uv4l
     video.src = "http://" + robot_IP + ":8080/stream/video.mjpeg";
 
     video.onload = function () {
-        // joystick and keyboard controls will be available only when video is correctly loaded
+        // reate the joystick control and put it on the page only after the video has loaded
         createJoystick();
+        //Start listening to keystrokes only after the video has loaded
         initTeleopKeyboard();
     };
-
+    //Use jquery to include the entire custom slider javascript
     $.getScript("slider.js");
 }
