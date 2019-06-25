@@ -119,7 +119,7 @@ function connect(){
   // and port 9090 for rosbridge
   robot_IP = "127.0.0.1";
 
-  // // Init handle for rosbridge_websocket
+  //Init handle for rosbridge_websocket
   //Connect to ros master on robot using roslibjs on client and rosbridge on robot
   ros = new ROSLIB.Ros({
       url: "ws://" + robot_IP + ":9090"

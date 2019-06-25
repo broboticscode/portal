@@ -509,6 +509,7 @@ function refreshRobotMarker(lat,lng) {
        //Create context menu object
       var contextMenu = new ContextMenu(map, contextMenuOptions);
 
+      //Create listener for all the callbacks
        google.maps.event.addListener(contextMenu, 'menu_item_selected',
           function(event, eventName, source){
           //console.log("Marker right click selected item with latlng " +latLng);
@@ -540,7 +541,7 @@ function refreshRobotMarker(lat,lng) {
           }
           contextMenu.hide();
       });
-
+      //Make the context menu appear when the live robot marker is right clicked
       google.maps.event.addListener(marker, 'rightclick', function(mouseEvent) {
         //alert('Right click ON ' + markers.indexOf(marker) + ' triggered');
 
@@ -573,6 +574,7 @@ function refreshRobotMarker(lat,lng) {
     //  map.panTo(latLng);
 }
 
+//Have a marker appear on a specific map
 function setMapOnMarker(marker,map){
     marker.setMap(map);
 }
@@ -585,7 +587,6 @@ function shiftLabelsRight(index){
   }
 
 //Shift the labels to the left for deleting a marker
-
 function shiftLabelsLeft(index){
   for(var index =index+1; index<this.markers.length;++index) {
       var num= Number(markers[index].label)-1
@@ -594,7 +595,7 @@ function shiftLabelsLeft(index){
     }
   }
 
-
+//Find a marker object and return it given a latlng pair, else return null
 function findMarker(latLng){
   if(latLng==null){
     return null;
@@ -607,6 +608,8 @@ function findMarker(latLng){
   }
   return null;
 }
+
+//Go through the marker and latlng global lists to delete a marker object and update the path surrounding it
 function deleteMarker(latLng){
   //deleteAllMarkers();
   //deleteAllPaths();
@@ -622,32 +625,30 @@ function deleteMarker(latLng){
       this.markers.splice(index,1);
       var path = plannedPath.getPath();
       path.removeAt(index);
-
-
-
-      //path.splice(index,1);
-      //path = [];
-
     }
-
   }
+  //List markers for the console so we can debug
   listMarkers();
   //reorderMarkers();
 
 }
 
+//Iterate through all the stores markers and make them appear on the map
 function setMapOnAllMarkers(map) {
         for (var i = 0; i < markers.length; i++) {
           //markers[i].setMap(map);
           setMapOnMarker(markers[i],map);
         }
       }
+
+//Iterate through all the stored paths and make them appear on the map
 function setMapOnAllPaths(map) {
         for (var i = 0; i < paths.length; i++) {
           paths[i].setMap(map);
         }
       }
 
+//Reorder the markers
 function reorderMarkers(){
   oldlatLngs=Array.from(latLngs);
   deleteAllLatLngs();
@@ -657,18 +658,21 @@ function reorderMarkers(){
 
 }
 
+//List all the latlng pairs stored globablly in the console
 function listLatLngs(){
   for(var index =0; index<this.latLngs.length;++index) {
     console.log("Lat " + latLngs[index].lat() + " Long " + latLngs[index].lng());
   }
 }
 
+//List all the global markers with their lat and lng coordinates in the console
 function listMarkers(){
   for(var index =0; index<this.latLngs.length;++index) {
     console.log("Lat " + markers[index].position.lat() + " Long " + markers[index].position.lng());
   }
 }
 
+//List all the paths stored globbaly to the console
 function listPaths(){
   path = plannedPath.getPath();
   console.log(path);
@@ -677,15 +681,7 @@ function listPaths(){
   }
 }
 
-
-// function updateRobotMarker(lat, lng){
-//   var myLatLng = {lat: lat, lng: lng};
-//
-//   currentMarker.setPosition(myLatLng);
-//   currentMarker.setMap(map);
-//
-// }
-
+//Create a rosnode that listens on the fix topic for GPS data
 function fixListener(){
 
   var listener = new ROSLIB.Topic({
@@ -694,6 +690,7 @@ function fixListener(){
     messageType : 'sensor_msgs/NavSatFix'
   });
 
+//Test rosnode in future with a String check to indiicate robot online
   // var listener = new ROSLIB.Topic({
   //   ros : ros,
   //   name : '/listener',
@@ -714,14 +711,17 @@ function fixListener(){
 
 }
 
+//Connect to the robot using websockets
 function connect(){
-  // determine robot address automatically
-  // robot_IP = location.hostname;
-  // set robot address statically
+  //IP Address of robot, can be local or global
+  //If using global recommended to use a dynamic dns like noip
+
+  //global connection requires port forwarding on port 80 for webserver
+  // and port 9090 for rosbridge
   robot_IP = "127.0.0.1";
 
-  // // Init handle for rosbridge_websocket
-  ros = new ROSLIB.Ros({
+  //Init handle for rosbridge_websocket
+  //Connect to ros master on robot using roslibjs on client and rosbridge on robot  ros = new ROSLIB.Ros({
       url: "ws://" + robot_IP + ":9090"
   });
     ros.on('connection', function() {
@@ -738,10 +738,13 @@ function connect(){
 }
 
 window.onload = function () {
-  //turned off connection temporarily
+
+  //setup ROS connection
   connect();
+
+  //attatch the gps fix subscriber
   fixListener();
 
-  //temporarily manually invoke this
+  //Once window is loaded then we can initialise the map
   initMap();
 }
