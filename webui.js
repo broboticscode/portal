@@ -1,3 +1,14 @@
+/* Webui.js
+
+This JS file handles all of the functionality present in the index.html file
+
+webui supports the portal homepage in:
+  -displaying live robot video
+  -providing a virtual joystick to control the robot
+  -providing a
+
+
+*/
 var twist;
 var cmdVel;
 var publishImmidiately = true;
@@ -18,6 +29,7 @@ function moveAction(linear, angular) {
     cmdVel.publish(twist);
 }
 
+//Create a publisher on cmd_vel topic to publish Twist messages
 function initVelocityPublisher() {
     // Init message with zero values.
     twist = new ROSLIB.Message({
@@ -32,7 +44,7 @@ function initVelocityPublisher() {
             z: 0
         }
     });
-    // Init topic object
+    //Init topic object to publish Twist messages on cmd_vel
     cmdVel = new ROSLIB.Topic({
         ros: ros,
         name: '/turtle1/cmd_vel',
@@ -42,6 +54,7 @@ function initVelocityPublisher() {
     cmdVel.advertise();
 }
 
+//Initialise the keyboard and use robot webtools keyboard teleop package to send cmd_vel messages
 function initTeleopKeyboard() {
     // Use w, s, a, d keys to drive your robot
 
@@ -54,7 +67,7 @@ function initTeleopKeyboard() {
         });
     }
 
-    // Add event listener for slider moves
+    // Add event listener for slider moves and modify the speed of the robot accordingly
     robotSpeedRange = document.getElementById("robot-speed");
     robotSpeedRange.oninput = function () {
         teleop.scale = robotSpeedRange.value / 100
