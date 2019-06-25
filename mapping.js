@@ -239,7 +239,7 @@ function initMap() {
           //deleteMenu.open(map, plannedPath.getPath(), e.vertex);
         });
 
-
+  // refreshRobotMarker(-33.828719,151.189607)
 }
 
 //Centre the map on a lat lng pair
@@ -461,10 +461,13 @@ function refreshRobotMarker(lat,lng) {
       latLng = new google.maps.LatLng(lat, lng);
 
       //Create the marker object with the defender icon!
+      //old hardcoded marker code
+      // icon: {'/defender_resized.png',
+
       var marker = new google.maps.Marker({
         position: latLng,
         map: map,
-        icon: '/defender_resized.png'
+        icon: '/defender_marker.png',
       });
       robotMarker = marker;
       //add marker to arraylist
@@ -721,7 +724,8 @@ function connect(){
   robot_IP = "127.0.0.1";
 
   //Init handle for rosbridge_websocket
-  //Connect to ros master on robot using roslibjs on client and rosbridge on robot  ros = new ROSLIB.Ros({
+  //Connect to ros master on robot using roslibjs on client and rosbridge on robot
+  ros = new ROSLIB.Ros({
       url: "ws://" + robot_IP + ":9090"
   });
 
@@ -751,4 +755,5 @@ window.onload = function () {
 
   //Once window is loaded then we can initialise the map
   initMap();
+
 }
